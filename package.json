@@ -1,0 +1,27 @@
+{
+  "name": "webpack-ex",
+  "version": "1.0.0",
+  "description": "> 🍭 vue-press",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/new-cloud/webpack-ex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/new-cloud/webpack-ex/issues"
+  },
+  "homepage": "https://github.com/new-cloud/webpack-ex#readme",
+  "devDependencies": {
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
