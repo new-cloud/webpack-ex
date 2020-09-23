@@ -22,11 +22,11 @@ module.exports = {
       // historyApiFallback: true,//不跳转
       // inline: true//实时刷新
     },
-    //使用插件
+    //使用插件 打包hmtl
     plugins: [
       new HtmlWebpackPlugin({
         //指定要编译的模板文件 不指定模板会按照默认模板生成一个html页面
-        template: __dirname + '/public/index.html',
+        template: __dirname + '/src/index.html',
         //输出的文件名
         filename: 'index.html',
         //让我们引入的JS后面加上HASH戳,清除浏览器对JS的缓存
@@ -37,5 +37,17 @@ module.exports = {
         //   ....
         // }
       })
-    ]
+    ],
+    //使用加载器loader处理规则  打包CSS 打包之前需要在全局入口文件 main.js中引入css文件
+    module: {
+      rules: [{
+        test: /\.(css|scss)$/, //基于正则匹配处理那些文件
+        //使用那些loader  (执行顺序：从右到左执行解析)
+        use: [
+          "style-loader", //把编译好的CSS插入到页面(index.html)的头部head标签中的style标签中去
+          "css-loader",   //解析css文件中@import/url()
+        ],
+      }]
+    }
+      
   }
