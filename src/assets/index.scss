@@ -1,8 +1,9 @@
-@import './common.css';
+@import './common.scss';
 #app{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
-    color: rgb(105, 236, 29);
+    color: rgb(233, 42, 131);
+    @include woshiname(center);
 }

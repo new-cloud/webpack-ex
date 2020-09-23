@@ -22,14 +22,14 @@ module.exports = {
       // historyApiFallback: true,//不跳转
       // inline: true//实时刷新
     },
-    //使用插件 打包hmtl
+    //使用插件 打包hmtl  并且会自动引入css js 到html当中
     plugins: [
       new HtmlWebpackPlugin({
         //指定要编译的模板文件 不指定模板会按照默认模板生成一个html页面
-        template: __dirname + '/src/index.html',
+        template: __dirname + '/public/index.html',
         //输出的文件名
         filename: 'index.html',
-        //让我们引入的JS后面加上HASH戳,清除浏览器对JS的缓存
+        //让我们引入的JS后面加上HASH戳,清除浏览器对JS的缓存  上面使用了.[hash] 这里就不用使用
         // hash: true,
         //控制压缩  生产环境自动压缩
         // minify: {
@@ -46,6 +46,9 @@ module.exports = {
         use: [
           "style-loader", //把编译好的CSS插入到页面(index.html)的头部head标签中的style标签中去
           "css-loader",   //解析css文件中@import/url()
+          "postcss-loader",  //使用autoprefixer为CSS样式添加前缀  这里需要安装autoprefixer和postcss-loader
+          //注意: autoprefixer 安装的时候要是8.0.0版本  高版本可能会报错(版本不兼容) npm i autoprefixer@8.0.0 --save-dev 安装8.0版本
+          "sass-loader",  //解析sacc成css
         ],
       }]
     }
