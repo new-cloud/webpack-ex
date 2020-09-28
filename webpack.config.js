@@ -1,10 +1,23 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin'),
+      MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+      path = require('path'),
+      OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'),//css压缩插件
+      UglifyjsPlugin = require('uglifyjs-webpack-plugin'); //js压缩插件
 
 module.exports = {
-    //配置优化规则
+    // 配置优化规则
+    // optimization: {
+    //   minimizer: [ //为什么不生效!!!!!!!!!!!!!!!!!!!!CAO
+    //     //压缩打包后的CSS
+    //     new OptimizeCssAssetsPlugin(),
+    //     //压缩JS
+    //     new UglifyjsPlugin({
+    //       cache: true,        //是否使用缓存
+    //       parallel: true,     //是否并发编译
+    //       // sourceMap: true,    //启动源码映射(方便调试)
+    //     })
+    //   ]
+    // },
     //配置环境  production生产环境    development开发环境
     mode: 'development', //不指定 默认为生产环境 
     entry: __dirname + "/src/main",//已多次提及的唯一入口文件
@@ -14,7 +27,7 @@ module.exports = {
       path: path.resolve(__dirname, 'dist'),
       //打包后输出文件的文件名   文件名后加.min打包后为压缩文件   在默认的生产环境中不加.min也是生成压缩后的文件
       //.[hash] 每一次生成的文件名都带着哈希值 也是为了清除缓存
-      filename: "bundle.[hash].js"
+      filename: "bundle.min.[hash].js"
     },
     devtool: "inline-source-map",  //这是消除一个警告，待研究？？
     //开发环境才需要的配置
@@ -34,32 +47,61 @@ module.exports = {
         template: __dirname + '/public/index.html',
         //输出的文件名
         filename: 'index.html',
-        //让我们引入的JS后面加上HASH戳,清除浏览器对JS的缓存  上面使用了.[hash] 这里就不用使用
-        // hash: true,
-        //控制压缩  生产环境自动压缩
-        // minify: {
-        //   collapseBooleanAttributes: true,
-        //   ....
-        // }
+        // hash: true,    //让我们引入的JS后面加上HASH戳,清除浏览器对JS的缓存  上面使用了.[hash] 这里就不用使用
+        //控制压缩html页面  生产环境自动压缩
+        minify: {
+          collapseWhitespace: true,
+          removeComments: true,
+          removeAttributeQuotes: true,
+          removeEmptyAttributes: true,
+          //等等....
+        }
       }),
       new MiniCssExtractPlugin({
-        filename: './css/[name].css',
+        filename: './css/[name].min.[hash].css',
+      }),
+      //压缩打包后的CSS
+      new OptimizeCssAssetsPlugin(),
+      //压缩JS
+      new UglifyjsPlugin({
+        cache: true,        //是否使用缓存
+        parallel: true,     //是否并发编译
+        // sourceMap: true,    //启动源码映射(方便调试)
       })
     ],
-    //使用加载器loader处理规则  打包CSS 打包之前需要在全局入口文件 main.js中引入css文件
+    //使用加载器loader处理规则  
     module: {
-      rules: [{
-        test: /\.(css|scss)$/, //基于正则匹配处理那些文件
-        //使用那些loader  (执行顺序：从右到左执行解析)
-        use: [
-          MiniCssExtractPlugin.loader, //抽离css
-          // "style-loader", //把编译好的CSS插入到页面(index.html)的头部head标签中的style标签中去
-          "css-loader",   //解析css文件中@import/url()
-          "postcss-loader",  //使用autoprefixer为CSS样式添加前缀  这里需要安装autoprefixer和postcss-loader
-          //注意: autoprefixer 安装的时候要是8.0.0版本  高版本可能会报错(版本不兼容) npm i autoprefixer@8.0.0 --save-dev 安装8.0版本
-          "sass-loader",  //解析sacc成css
-        ],
-      }]
+      rules: [
+        //打包CSS 打包之前需要在全局入口文件 main.js中引入css文件
+        {
+          test: /\.(css|scss)$/, //基于正则匹配处理那些文件
+          //使用那些loader  (执行顺序：从右到左执行解析)
+          use: [
+            MiniCssExtractPlugin.loader, //抽离css
+            // "style-loader", //把编译好的CSS插入到页面(index.html)的头部head标签中的style标签中去
+            "css-loader",   //解析css文件中@import/url()
+            "postcss-loader",  //使用autoprefixer为CSS样式添加前缀  这里需要安装autoprefixer和postcss-loader
+            //注意: autoprefixer 安装的时候要是8.0.0版本  高版本可能会报错(版本不兼容) npm i autoprefixer@8.0.0 --save-dev 安装8.0版本
+            "sass-loader",  //解析sacc成css
+          ],
+        },
+        {
+          test: /\.js$/,
+          exclude: /(node_modules|bower_components)/,//排除掉node_module目录
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env'], //转码规则
+                plugins: [ // 处理特殊语法
+                  ["@babel/plugin-proposal-decorators", {"legacy": true}], // 这个是装饰器
+                  ["@babel/plugin-proposal-class-properties", { "loose": true }],  
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
       
   }
