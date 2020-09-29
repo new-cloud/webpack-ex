@@ -27,7 +27,7 @@ module.exports = {
       path: path.resolve(__dirname, 'dist'),
       //打包后输出文件的文件名   文件名后加.min打包后为压缩文件   在默认的生产环境中不加.min也是生成压缩后的文件
       //.[hash] 每一次生成的文件名都带着哈希值 也是为了清除缓存
-      filename: "bundle.min.[hash].js"
+      filename: "static/js/bundle.min.[hash].js"
     },
     devtool: "inline-source-map",  //这是消除一个警告，待研究？？
     //开发环境才需要的配置
@@ -58,7 +58,8 @@ module.exports = {
         }
       }),
       new MiniCssExtractPlugin({
-        filename: './css/[name].min.[hash].css',
+        // filename: 'static/css/[name].min.[hash].css',
+        filename: '[name].min.[hash].css',
       }),
       //压缩打包后的CSS
       new OptimizeCssAssetsPlugin(),
@@ -82,7 +83,14 @@ module.exports = {
             "css-loader",   //解析css文件中@import/url()
             "postcss-loader",  //使用autoprefixer为CSS样式添加前缀  这里需要安装autoprefixer和postcss-loader
             //注意: autoprefixer 安装的时候要是8.0.0版本  高版本可能会报错(版本不兼容) npm i autoprefixer@8.0.0 --save-dev 安装8.0版本
-            "sass-loader",  //解析sacc成css
+            // {
+            //   loader: 'resolve-url-loader',  //辣鸡没生效
+            //   // options: { sourceMap: true }
+            // },
+            {
+              loader: 'sass-loader',  //解析sacc成css
+              // options: { sourceMap: true }
+            },
           ],
         },
         {
@@ -100,6 +108,35 @@ module.exports = {
               }
             }
           ]
+        },
+        // {
+        //   //处理图片
+        //   test: /\.(png|jpg|jpeg|gif|ico|webp)$/i,
+        //   use: [
+        //     {
+        //       loader: 'file-loader',
+        //       options: {
+        //         esModule: false
+        //       }
+        //     }
+        //   ],
+        // },
+        {   //图片处理使用 url-loader 代替 file-loader
+          test: /\.(png|jpg|jpeg|gif|ico|webp)$/,
+          use: [{
+            loader: 'url-loader',
+            options: {
+              limit: 1024 * 50, // 50k以内的图片转Base64打包到js中
+              name: '[name].[hash:7].[ext]', // 打包的文件名
+              outputPath: 'static/img/',
+              esModule: false
+            }
+          }]
+        },
+        {
+          //处理html文件中导入的图片
+          test: /\.(html|htm|xml)$/i,
+          use: ['html-withimg-loader']
         }
       ]
     }

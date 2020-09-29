@@ -5,7 +5,14 @@ import {bibi} from './es6';
 //common.js规范  Node 环境下的规范
 let {dedounce} = require('./common');
 //引入CSS
-require('./assets/index.scss');
+require('./assets/css/index.scss');
+//在webpack下的JS中使用图片,需要把图片导入进来再使用
+// let imgSrc = require('./assets/img/jianxian.jpg');
+
+// let imgObj = new Image();
+// imgObj.src = imgSrc;
+// document.body.appendChild(imgObj);
+
 function add(){
     return new Promise((rl)=>{
         setTimeout(()=>{
