@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin'),
 module.exports = {
     // 配置优化规则
     // optimization: {
-    //   minimizer: [ //为什么不生效!!!!!!!!!!!!!!!!!!!!CAO
+    //   minimizer: [ // 如果当前环境为开发环境  此配置项不生效
     //     //压缩打包后的CSS
     //     new OptimizeCssAssetsPlugin(),
     //     //压缩JS
