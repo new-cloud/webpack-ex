@@ -61,7 +61,7 @@ module.exports = {
         // filename: 'static/css/[name].min.[hash].css',
         filename: '[name].min.[hash].css',
       }),
-      //压缩打包后的CSS
+      //压缩打包后的CSS   这里的压缩css和Js 不会受环境变量的影响，这是和optimization里的差别所在
       new OptimizeCssAssetsPlugin(),
       //压缩JS
       new UglifyjsPlugin({
